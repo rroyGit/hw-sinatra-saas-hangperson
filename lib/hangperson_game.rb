@@ -8,6 +8,8 @@ class HangpersonGame
   # def initialize()
   # end
   
+  MAX_NUM_GUESSES = 7
+  
   attr_accessor :word, :guesses, :wrong_guesses
   
   def initialize(word)
@@ -29,8 +31,40 @@ class HangpersonGame
   end
   
   def guess aGuess
-    @guesses = aGuess
+    if (aGuess == nil) || !(aGuess =~ /[a-zA-Z]/)
+      raise ArgumentError
+    end
+    
+    aGuess.downcase!
+    if (@guesses.include? aGuess) || (@wrong_guesses.include? aGuess)
+      return false
+    end  
+    if @word.include? aGuess
+      @guesses += aGuess
+    elsif
+      @wrong_guesses += aGuess
+    end
   end
   
+  def word_with_guesses
+    stringReturn = Array.new(@word.length, '-')
+    for char in @guesses.chars do
+      for index in 0...@word.length do 
+        stringReturn[index] = char if char == @word[index]
+      end
+    end
+    
+    return stringReturn.join()
+  end
+  
+  def check_win_or_lose
+    if word_with_guesses == @word
+      return :win
+    elsif (@wrong_guesses.length >= MAX_NUM_GUESSES) && (word_with_guesses != @word) 
+      return :lose
+    else
+      return :play
+    end
+  end
   
 end
